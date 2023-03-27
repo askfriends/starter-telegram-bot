@@ -44,6 +44,7 @@ const replyWithIntro = (ctx: any) =>
   });
 
 bot.command("start", replyWithIntro);
+bot.command("owner", owner);
 bot.on("message", replyWithIntro);
 
 // Start the server
