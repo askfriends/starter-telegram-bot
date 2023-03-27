@@ -24,8 +24,8 @@ const aboutUrlKeyboard = new InlineKeyboard().url(
 bot.api.setMyCommands([
   { command: "yo", description: "Be greeted by the bot" },
   {
-    command: "effect",
-    description: "Apply text effects on the text. (usage: /effect [text])",
+    command: "owner",
+    description: "Shows the info about the owner. (usage: /owner)",
   },
 ]);
 
@@ -35,7 +35,7 @@ I'm powered by Cyclic, the next-generation serverless computing platform.
 
 <b>Commands</b>
 /yo - Be greeted by me
-/effect [text] - Show a keyboard to apply text effects to [text]`;
+/owner - Shows info about the owner`;
 
 const replyWithIntro = (ctx: any) =>
   ctx.reply(introductionMessage, {
