@@ -1,7 +1,7 @@
 import { Bot, InlineKeyboard, webhookCallback } from "grammy";
 import { chunk } from "lodash";
 import express from "express";
-import { applyTextEffect, Variant } from "./textEffects";
+
 
 import type { Variant as TextEffectVariant } from "./textEffects";
 
