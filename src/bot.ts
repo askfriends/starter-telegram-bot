@@ -1,64 +1,50 @@
-import { Bot, InlineKeyboard, webhookCallback } from "grammy";
-import { chunk } from "lodash";
-import express from "express";
+import os
+import random
+from telegram.ext import Updater, CommandHandler
 
+# Define the Telegram bot token
+TOKEN = os.environ.get('TELEGRAM_TOKEN')
 
-import type { Variant as TextEffectVariant } from "./textEffects";
+# Define the five random commands
+def start(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, text="Hi there! I'm a random bot.")
 
-// Create a bot using the Telegram token
-const bot = new Bot(process.env.TELEGRAM_TOKEN || "");
+def flip(update, context):
+    flip_result = random.choice(['Heads', 'Tails'])
+    context.bot.send_message(chat_id=update.effective_chat.id, text=f"The coin landed on {flip_result}!")
 
-// Handle the /yo command to greet the user
-bot.command("yo", (ctx) => ctx.reply(`Yo ${ctx.from?.username}`));
+def roll(update, context):
+    roll_result = random.randint(1, 6)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=f"You rolled a {roll_result}.")
 
-// Handle the /effect command to apply text effects using an inline keyboard
-bot.command("owner", (ctx) => ctx.reply(`Owner of this bot is: ${ctx.from?.username}`));
+def quote(update, context):
+    quotes = [
+        "Be yourself; everyone else is already taken. - Oscar Wilde",
+        "Two things are infinite: the universe and human stupidity; and I'm not sure about the universe. - Albert Einstein",
+        "You know you're in love when you can't fall asleep because reality is finally better than your dreams. - Dr. Seuss"
+    ]
+    random_quote = random.choice(quotes)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=random_quote)
 
-// Handle the /about command
-const aboutUrlKeyboard = new InlineKeyboard().url(
-  "Host your own bot for free.",
-  "https://cyclic.sh/"
-);
+def fact(update, context):
+    facts = [
+        "A group of flamingos is called a flamboyance.",
+        "The shortest war in history was between Britain and Zanzibar on August 27, 1896. Zanzibar surrendered after 38 minutes.",
+        "In Switzerland, it is illegal to own just one guinea pig because they are social animals and need companionship."
+    ]
+    random_fact = random.choice(facts)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=random_fact)
 
-// Suggest commands in the menu
-bot.api.setMyCommands([
-  { command: "yo", description: "Be greeted by the bot" },
-  {
-    command: "owner",
-    description: "Shows the info about the owner. (usage: /owner)",
-  },
-]);
+# Set up the Telegram bot updater and dispatcher
+updater = Updater(token=TOKEN, use_context=True)
+dispatcher = updater.dispatcher
 
-// Handle all other messages and the /start command
-const introductionMessage = `Hello! I'm a Telegram bot.
-I'm powered by Cyclic, the next-generation serverless computing platform.
+# Add the command handlers for the random commands
+dispatcher.add_handler(CommandHandler('start', start))
+dispatcher.add_handler(CommandHandler('flip', flip))
+dispatcher.add_handler(CommandHandler('roll', roll))
+dispatcher.add_handler(CommandHandler('quote', quote))
+dispatcher.add_handler(CommandHandler('fact', fact))
 
-<b>Commands</b>
-/yo - Be greeted by me
-/owner - Shows info about the owner`;
-
-const replyWithIntro = (ctx: any) =>
-  ctx.reply(introductionMessage, {
-    reply_markup: aboutUrlKeyboard,
-    parse_mode: "HTML",
-  });
-
-bot.command("start", replyWithIntro);
-bot.command("owner", owner);
-bot.on("message", replyWithIntro);
-
-// Start the server
-if (process.env.NODE_ENV === "production") {
-  // Use Webhooks for the production server
-  const app = express();
-  app.use(express.json());
-  app.use(webhookCallback(bot, "express"));
-
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`Bot listening on port ${PORT}`);
-  });
-} else {
-  // Use Long Polling for development
-  bot.start();
-}
+# Start the bot
+updater.start_polling()
